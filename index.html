@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shopmazon</title>
+<style>
+  :root{
+    --ink:#131921; --nav2:#232F3E; --ember:#FF9900; --ember2:#FEBD69; --ember3:#F7CA00;
+    --link:#007185; --linkhover:#C7511F; --price:#0F1111; --deal:#CC0C39;
+    --bg:#EAEDED; --line:#D5D9D9; --star:#DE7921; --prime:#007185; --sponsor:#565959; --ok:#067D62;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Amazon Ember","Helvetica Neue",Arial,sans-serif;background:var(--bg);
+    color:var(--price);-webkit-font-smoothing:antialiased}
+  a{color:var(--link);text-decoration:none;cursor:pointer}
+  a:hover{color:var(--linkhover);text-decoration:underline}
+  button{font-family:inherit;cursor:pointer}
+  img{display:block}
+  .hide{display:none!important}
+
+  header{background:var(--ink);color:#fff;position:sticky;top:0;z-index:50}
+  .navtop{display:flex;align-items:center;gap:8px;padding:6px 14px}
+  .logo{font-size:24px;font-weight:800;letter-spacing:-.5px;padding:6px;border:1px solid transparent;
+    border-radius:2px;cursor:pointer;white-space:nowrap}
+  .logo:hover{border-color:#fff}
+  .logo b{color:var(--ember)}
+  .deliver{display:flex;align-items:flex-end;gap:2px;padding:6px;border:1px solid transparent;
+    border-radius:2px;font-size:12px;color:#ccc;cursor:pointer;white-space:nowrap}
+  .deliver:hover{border-color:#fff}
+  .deliver .to{line-height:1.1}.deliver .to b{color:#fff;font-size:13px}
+  .pin{font-size:18px}
+  .search{flex:1;display:flex;height:40px;border-radius:4px;overflow:hidden;min-width:120px}
+  .search:focus-within{outline:3px solid var(--ember3)}
+  .search select{border:none;background:#F3F3F3;padding:0 8px;font-size:12px;color:#555;border-right:1px solid #ccc;max-width:120px}
+  .search input{flex:1;border:none;padding:0 12px;font-size:15px;min-width:0}
+  .search input:focus{outline:none}
+  .search .go{width:45px;background:var(--ember2);border:none;font-size:18px;display:flex;align-items:center;justify-content:center}
+  .search .go:hover{background:var(--ember)}
+  .navlink{padding:6px;border:1px solid transparent;border-radius:2px;color:#fff;font-size:14px;white-space:nowrap}
+  .navlink:hover{border-color:#fff;color:#fff;text-decoration:none}
+  .navlink .l1{font-size:12px;color:#ccc}.navlink .l2{font-weight:700;line-height:1.1}
+  .cart{display:flex;align-items:flex-end;position:relative;gap:4px}
+  .cart .count{position:absolute;left:16px;top:-4px;color:var(--ember);font-weight:800;font-size:16px}
+  .cart .ci{font-size:26px;line-height:1}
+  .navbot{background:var(--nav2);color:#fff;display:flex;align-items:center;gap:4px;padding:4px 12px;font-size:14px;overflow-x:auto}
+  .navbot a{color:#fff;padding:6px 9px;border:1px solid transparent;border-radius:2px;white-space:nowrap}
+  .navbot a:hover{border-color:#fff;text-decoration:none}
+  .navbot a.active{border-color:var(--ember)}
+
+  main{max-width:1500px;margin:0 auto;padding:14px}
+  .view{animation:f .25s ease}
+  @keyframes f{from{opacity:0}to{opacity:1}}
+
+  .hero{background:linear-gradient(#232F3E,#37475A 60%,transparent);border-radius:6px;padding:26px 30px;color:#fff;margin-bottom:14px}
+  .hero h1{font-size:26px;margin-bottom:4px}
+  .hero p{color:#cfd6dd;font-size:14px}
+
+  .rbar{display:flex;justify-content:space-between;align-items:center;background:#fff;padding:10px 16px;border-radius:6px;margin-bottom:12px;flex-wrap:wrap;gap:10px}
+  .rbar .rc{font-size:14px;color:#565959}.rbar .rc b{color:var(--price)}
+  .rbar select{padding:7px 10px;border:1px solid #888C8C;border-radius:8px;background:#F0F2F2;font-size:13px}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+  .prod{background:#fff;border-radius:8px;padding:16px;display:flex;flex-direction:column;border:1px solid transparent;transition:box-shadow .15s}
+  .prod:hover{box-shadow:0 2px 14px rgba(0,0,0,.12)}
+  .prod.sponsored{border-color:#E3E6E6}
+  .thumb{height:200px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;cursor:pointer;background:#fff}
+  .thumb img{max-width:100%;max-height:190px;object-fit:contain}
+  .fallback{width:150px;height:150px;display:flex;align-items:center;justify-content:center;font-size:70px;background:#f3f5f5;border-radius:12px}
+  .sp-tag{font-size:11px;color:var(--sponsor);border:1px solid #E3E6E6;background:#F7F8F8;border-radius:4px;padding:1px 6px;align-self:flex-start;margin-bottom:6px}
+  .brandline{font-size:12px;color:#565959;margin-bottom:3px}
+  .pt{font-size:14px;line-height:1.3;color:var(--price);margin-bottom:5px;cursor:pointer;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .pt:hover{color:var(--linkhover)}
+  .stars{display:flex;align-items:center;gap:6px;margin-bottom:5px;font-size:13px}
+  .starrow{color:var(--star);letter-spacing:1px}
+  .rcount{color:var(--link);font-size:13px}
+  .pr{margin-bottom:4px}
+  .pr .sym{font-size:12px;vertical-align:top;position:relative;top:2px}
+  .pr .whole{font-size:22px;font-weight:600}
+  .pr .frac{font-size:12px;vertical-align:top;position:relative;top:2px}
+  .pr .list{color:#565959;font-size:12px;margin-left:6px}
+  .pr .list s{color:#565959}
+  .prime{color:var(--prime);font-size:13px;font-weight:700;margin-bottom:8px}
+  .prime .chk{color:#00A8E1}
+  .deliv{font-size:12px;color:#565959;margin-bottom:10px}
+  .deliv b{color:var(--price)}
+  .addbtn{margin-top:auto;background:var(--ember2);border:1px solid #FCD200;border-radius:100px;padding:8px;font-size:13px;font-weight:500}
+  .addbtn:hover{background:var(--ember)}
+
+  .back{display:inline-block;margin-bottom:12px;font-size:14px}
+  .pdp{display:grid;grid-template-columns:1fr 1.2fr 300px;gap:24px;background:#fff;border-radius:8px;padding:22px}
+  .pdp-img{position:sticky;top:110px;align-self:start}
+  .pdp-img .big{height:360px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:6px;background:#fff;padding:10px}
+  .pdp-img .big img{max-height:340px;max-width:100%;object-fit:contain}
+  .gthumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .gthumbs img{width:56px;height:56px;object-fit:contain;border:1px solid var(--line);border-radius:6px;cursor:pointer;padding:3px;background:#fff}
+  .gthumbs img.sel{border:2px solid var(--link)}
+  .pdp-mid h2{font-size:22px;font-weight:500;line-height:1.3;margin-bottom:6px}
+  .pdp-brand{font-size:14px;margin-bottom:8px}
+  .pdp-stars{display:flex;align-items:center;gap:8px;padding-bottom:10px;border-bottom:1px solid var(--line);margin-bottom:12px}
+  .pdp-price{margin:10px 0}
+  .pdp-price .whole{font-size:28px;font-weight:600}
+  .feat{margin:16px 0}
+  .feat h3{font-size:15px;margin-bottom:8px}
+  .feat p{font-size:14px;line-height:1.6;color:#333;margin-bottom:10px}
+  .feat ul{padding-left:18px;font-size:14px;line-height:1.7;color:#333}
+  .buybox{border:1px solid var(--line);border-radius:10px;padding:16px;position:sticky;top:110px;align-self:start;height:fit-content}
+  .buybox .bprice .whole{font-size:24px;font-weight:600}
+  .buybox .stock{color:var(--ok);font-size:17px;font-weight:500;margin:10px 0}
+  .buybox .low{color:var(--deal);font-size:14px;margin:6px 0}
+  .buybox .ship{font-size:13px;color:#565959;margin:8px 0}
+  .buybox select{width:100%;padding:7px;border-radius:8px;border:1px solid #888C8C;margin:10px 0;background:#F0F2F2}
+  .btn-cart{width:100%;background:var(--ember2);border:1px solid #FCD200;border-radius:100px;padding:10px;font-size:14px;margin-bottom:8px}
+  .btn-cart:hover{background:var(--ember)}
+  .btn-buy{width:100%;background:var(--ember3);border:1px solid #F2C200;border-radius:100px;padding:10px;font-size:14px}
+  .btn-buy:hover{background:#F0B800}
+  .secure{font-size:12px;color:#565959;margin-top:10px;display:flex;gap:6px}
+
+  .cartwrap{display:grid;grid-template-columns:1fr 300px;gap:16px}
+  .cartmain{background:#fff;border-radius:8px;padding:22px}
+  .cartmain h1{font-size:26px;font-weight:500;border-bottom:1px solid var(--line);padding-bottom:12px}
+  .subtitle{text-align:right;color:#565959;font-size:13px;margin-bottom:8px}
+  .citem{display:grid;grid-template-columns:120px 1fr auto;gap:16px;padding:18px 0;border-bottom:1px solid var(--line)}
+  .citem .cthumb{height:110px;display:flex;align-items:center;justify-content:center}
+  .citem .cthumb img{max-height:110px;max-width:100%;object-fit:contain}
+  .citem .cname{font-size:16px;margin-bottom:4px}
+  .citem .cstock{color:var(--ok);font-size:13px;margin-bottom:8px}
+  .citem .cctrl{display:flex;align-items:center;gap:14px;font-size:13px}
+  .qtybox{display:flex;align-items:center;border:1px solid #D5D9D9;border-radius:8px;box-shadow:0 2px 5px rgba(15,17,17,.1);overflow:hidden}
+  .qtybox button{width:34px;height:32px;border:none;background:#F0F2F2;font-size:16px}
+  .qtybox button:hover{background:#e3e6e6}
+  .qtybox span{width:34px;text-align:center;font-size:14px}
+  .citem .cprice{font-size:18px;font-weight:700;text-align:right}
+  .csep{font-size:13px}
+  .carttotal{text-align:right;font-size:18px;padding-top:16px}
+  .carttotal b{font-weight:700}
+  .checkout-side{background:#fff;border-radius:8px;padding:18px;height:fit-content}
+  .checkout-side .free{background:#e6f4ea;color:var(--ok);font-size:12px;padding:6px 10px;border-radius:6px;margin-bottom:12px}
+  .checkout-side .st{font-size:18px;margin-bottom:12px}
+  .btn-checkout{width:100%;background:var(--ember3);border:1px solid #F2C200;border-radius:100px;padding:10px;font-size:14px}
+  .btn-checkout:hover{background:#F0B800}
+  .empty{text-align:center;padding:60px 20px}
+  .empty .ei{font-size:60px;margin-bottom:14px}
+  .empty h2{font-weight:500;margin-bottom:14px}
+
+  .cowrap{display:grid;grid-template-columns:1fr 300px;gap:16px}
+  .cobox{background:#fff;border-radius:8px;padding:24px;margin-bottom:14px}
+  .cobox h3{font-size:18px;color:#C7511F;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:16px}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:13px;font-weight:700;margin-bottom:4px}
+  .field input,.field select{width:100%;padding:9px;border:1px solid #888C8C;border-radius:8px;font-size:14px}
+  .field input:focus,.field select:focus{outline:2px solid var(--ember3);border-color:var(--ember)}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .co-note{font-size:12px;color:#565959;margin-top:8px}
+  .btn-place{width:100%;background:var(--ember3);border:1px solid #F2C200;border-radius:100px;padding:11px;font-size:15px;font-weight:500}
+  .btn-place:hover{background:#F0B800}
+  .osum{background:#fff;border-radius:8px;padding:18px;height:fit-content;position:sticky;top:110px}
+  .osum h3{font-size:16px;margin-bottom:12px;border-bottom:1px solid var(--line);padding-bottom:10px}
+  .oline{display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px;color:#565959}
+  .oline.total{font-size:18px;font-weight:700;color:var(--deal);border-top:1px solid var(--line);padding-top:10px;margin-top:6px}
+
+  .conf{background:#fff;border-radius:8px;padding:40px;text-align:center;max-width:640px;margin:0 auto}
+  .conf .big{font-size:50px;margin-bottom:12px}
+  .conf h1{color:var(--ok);font-weight:500;margin-bottom:8px}
+  .conf p{color:#565959;margin-bottom:6px}
+  .conf .oid{font-family:monospace;font-size:15px;background:#F0F2F2;padding:6px 12px;border-radius:6px;display:inline-block;margin:12px 0}
+  .conf button{margin-top:16px;background:var(--ember2);border:1px solid #FCD200;border-radius:100px;padding:10px 28px;font-size:14px}
+  .conf button:hover{background:var(--ember)}
+
+  .loading{text-align:center;padding:90px 20px;color:#565959}
+  .spinner{width:40px;height:40px;border:4px solid #ddd;border-top-color:var(--ember);border-radius:50%;margin:0 auto 16px;animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .errbox{background:#fff;border-radius:8px;padding:40px;text-align:center;max-width:520px;margin:40px auto}
+  .errbox button{margin-top:14px;background:var(--ember2);border:1px solid #FCD200;border-radius:100px;padding:9px 24px}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--nav2);color:#fff;padding:12px 22px;border-radius:8px;font-size:14px;box-shadow:0 4px 20px rgba(0,0,0,.3);transition:transform .3s;z-index:100}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+
+  footer{background:var(--nav2);color:#ccc;text-align:center;padding:24px;margin-top:30px;font-size:13px}
+  .backtop{background:#37475A;color:#fff;text-align:center;padding:15px;font-size:14px;cursor:pointer}
+  .backtop:hover{background:#485769}
+
+  @media(max-width:900px){
+    .pdp{grid-template-columns:1fr}.pdp-img,.buybox{position:static}
+    .cartwrap,.cowrap{grid-template-columns:1fr}.osum{position:static}
+    .deliver,.navlink .l1{display:none}
+  }
+  :focus-visible{outline:2px solid var(--ember3);outline-offset:1px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="navtop">
+    <div class="logo" onclick="go('home')">shop<b>mazon</b></div>
+    <div class="deliver" onclick="toast('Location picker is UI-only in this demo')">
+      <span class="pin">&#128205;</span>
+      <div class="to"><span>Deliver to</span><br><b>Cairo 11511</b></div>
+    </div>
+    <div class="search">
+      <select id="searchCat"><option value="">All</option></select>
+      <input id="searchInput" placeholder="Search Shopmazon" onkeydown="if(event.key==='Enter')doSearch()">
+      <button class="go" onclick="doSearch()">&#128269;</button>
+    </div>
+    <div class="navlink" onclick="toast('Account is UI-only in this demo')">
+      <div class="l1">Hello, sign in</div><div class="l2">Account &amp; Lists</div></div>
+    <div class="navlink" onclick="toast('Orders is UI-only in this demo')">
+      <div class="l1">Returns</div><div class="l2">&amp; Orders</div></div>
+    <div class="navlink cart" onclick="go('cart')">
+      <span class="count" id="cartCount">0</span><span class="ci">&#128722;</span>
+      <div class="l2" style="align-self:flex-end">Cart</div></div>
+  </div>
+  <div class="navbot" id="deptNav"></div>
+</header>
+
+<main id="app"></main>
+
+<div class="backtop" onclick="window.scrollTo({top:0,behavior:'smooth'})">Back to top</div>
+<footer>Shopmazon &middot; UI/UX study replica &middot; Catalog &amp; photos via DummyJSON demo API &middot; Prices shown in EGP at a fixed demo rate. No real payments or data.</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+const FX=48; /* demo USD->EGP */
+let PRODUCTS=[], CATS=[];
+let cart=JSON.parse(localStorage.getItem('shopmazon_cart')||'{}');
+let route={view:'home',cat:'',q:'',sort:'featured'};
+
+const money=c=>'EGP '+(c/100).toLocaleString('en-EG',{minimumFractionDigits:2,maximumFractionDigits:2});
+const priceParts=c=>{const s=(c/100).toFixed(2).split('.');return{whole:(+s[0]).toLocaleString('en-EG'),frac:s[1]};};
+const starRow=r=>{const f=Math.round(r);return'&#9733;'.repeat(f)+'&#9734;'.repeat(5-f);};
+const pretty=s=>s.replace(/-/g,' ').replace(/\b\w/g,m=>m.toUpperCase());
+const fallbackImg="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Crect width='150' height='150' rx='12' fill='%23f3f5f5'/%3E%3Ctext x='75' y='100' font-size='70' text-anchor='middle'%3E%F0%9F%93%A6%3C/text%3E%3C/svg%3E";
+function imgAttr(url){return `src="${url}" onerror="this.onerror=null;this.src='${fallbackImg}'"`;}
+
+function saveCart(){localStorage.setItem('shopmazon_cart',JSON.stringify(cart));updateCount();}
+function updateCount(){document.getElementById('cartCount').textContent=Object.values(cart).reduce((a,i)=>a+i.qty,0);}
+function cartKey(id){return String(id);}
+
+/* ---- load real catalog ---- */
+async function loadProducts(){
+  document.getElementById('app').innerHTML=`<div class="loading"><div class="spinner"></div>Loading products...</div>`;
+  try{
+    const res=await fetch('https://dummyjson.com/products?limit=100');
+    if(!res.ok)throw 0;
+    const data=await res.json();
+    PRODUCTS=data.products.map(mapProduct);
+    CATS=[...new Set(PRODUCTS.map(p=>p.cat))].sort();
+    buildNav();
+    render();
+  }catch(e){
+    document.getElementById('app').innerHTML=`<div class="errbox"><h2>Couldn't load products</h2>
+      <p>Check your internet connection and try again.</p>
+      <button onclick="loadProducts()">Retry</button></div>`;
+  }
+}
+function mapProduct(d){
+  const price=Math.round(d.price*FX*100);
+  const list=d.discountPercentage>0?Math.round(d.price/(1-d.discountPercentage/100)*FX*100):0;
+  return{
+    id:d.id, cat:d.category, brand:d.brand||pretty(d.category),
+    title:d.title, price, list, rating:d.rating||4.3,
+    reviews:180+((d.id*137)%9200), stock:d.stock||12,
+    img:d.thumbnail, images:(d.images&&d.images.length?d.images:[d.thumbnail]),
+    desc:d.description||'', prime:true, sponsored:(d.id%7===0)
+  };
+}
+
+function buildNav(){
+  const sc=document.getElementById('searchCat');
+  sc.innerHTML='<option value="">All</option>'+CATS.map(c=>`<option value="${c}">${pretty(c)}</option>`).join('');
+  const dn=document.getElementById('deptNav');
+  dn.innerHTML=`<a onclick="go('home')">&#9776; All</a>`+
+    CATS.slice(0,10).map(c=>`<a data-cat="${c}" onclick="goCat('${c}')">${pretty(c)}</a>`).join('');
+}
+
+/* ---- router ---- */
+function go(v){route.view=v;render();window.scrollTo(0,0);}
+function goCat(c){route={view:'home',cat:c,q:'',sort:'featured'};document.getElementById('searchInput').value='';render();window.scrollTo(0,0);}
+function doSearch(){route.q=document.getElementById('searchInput').value.trim().toLowerCase();
+  route.cat=document.getElementById('searchCat').value;route.view='home';render();window.scrollTo(0,0);}
+function openProduct(id){route.view='product';route.pid=id;render();window.scrollTo(0,0);}
+
+function render(){
+  if(!PRODUCTS.length)return;
+  document.querySelectorAll('#deptNav a[data-cat]').forEach(a=>
+    a.classList.toggle('active',a.dataset.cat===route.cat&&route.view==='home'));
+  const app=document.getElementById('app');
+  app.innerHTML={home:viewHome,product:()=>viewProduct(route.pid),cart:viewCart,
+    checkout:viewCheckout,confirm:viewConfirm}[route.view]();
+  updateCount();
+}
+
+/* ---- views ---- */
+function viewHome(){
+  let list=PRODUCTS.slice();
+  if(route.cat)list=list.filter(p=>p.cat===route.cat);
+  if(route.q)list=list.filter(p=>(p.title+' '+p.brand+' '+p.cat).toLowerCase().includes(route.q));
+  if(route.sort==='low')list.sort((a,b)=>a.price-b.price);
+  if(route.sort==='high')list.sort((a,b)=>b.price-a.price);
+  if(route.sort==='rating')list.sort((a,b)=>b.rating-a.rating);
+
+  const heading=route.q?`"${route.q}"`:route.cat?pretty(route.cat):'Featured deals';
+  const hero=(!route.q&&!route.cat)?`<div class="hero"><h1>Great deals, delivered fast</h1>
+    <p>UI/UX replica for learning &mdash; browse, add to cart, and run a full mock checkout.</p></div>`:'';
+  const cards=list.map(p=>{const pp=priceParts(p.price);return `<div class="prod ${p.sponsored?'sponsored':''}">
+    ${p.sponsored?'<span class="sp-tag">Sponsored</span>':''}
+    <div class="thumb" onclick="openProduct(${p.id})"><img ${imgAttr(p.img)} alt="${p.title}" loading="lazy"></div>
+    <div class="brandline">${p.brand}</div>
+    <div class="pt" onclick="openProduct(${p.id})">${p.title}</div>
+    <div class="stars"><span class="starrow">${starRow(p.rating)}</span><span class="rcount">${p.reviews.toLocaleString()}</span></div>
+    <div class="pr"><span class="sym">EGP</span><span class="whole">${pp.whole}</span><span class="frac">${pp.frac}</span>
+      ${p.list?`<span class="list">List: <s>${money(p.list)}</s></span>`:''}</div>
+    <div class="prime"><span class="chk">&#10003;</span>prime</div>
+    <div class="deliv">FREE delivery <b>Tomorrow</b></div>
+    <button class="addbtn" onclick="quickAdd(${p.id})">Add to cart</button></div>`;}).join('');
+
+  return `<div class="view">${hero}
+    <div class="rbar"><div class="rc"><b>${list.length}</b> results for <b>${heading}</b></div>
+      <select onchange="route.sort=this.value;render()">
+        <option value="featured">Sort: Featured</option>
+        <option value="low"${route.sort==='low'?' selected':''}>Price: Low to High</option>
+        <option value="high"${route.sort==='high'?' selected':''}>Price: High to Low</option>
+        <option value="rating"${route.sort==='rating'?' selected':''}>Avg. Customer Review</option>
+      </select></div>
+    ${list.length?`<div class="grid">${cards}</div>`:'<div class="empty"><div class="ei">&#128269;</div><h2>No results. Try another search.</h2></div>'}
+  </div>`;
+}
+
+function viewProduct(id){
+  const p=PRODUCTS.find(x=>x.id===id);const pp=priceParts(p.price);
+  const thumbs=p.images.map((u,i)=>`<img ${imgAttr(u)} class="${i===0?'sel':''}" alt="" onclick="swapMain(this,'${u.replace(/'/g,'')}')">`).join('');
+  const low=p.stock<=10;
+  return `<div class="view"><a class="back" onclick="go('home')">&larr; Back to results</a>
+    <div class="pdp">
+      <div class="pdp-img"><div class="big"><img id="pdpMain" ${imgAttr(p.images[0])} alt="${p.title}"></div>
+        ${p.images.length>1?`<div class="gthumbs">${thumbs}</div>`:''}</div>
+      <div class="pdp-mid">
+        <h2>${p.title}</h2>
+        <div class="pdp-brand">Brand: <a>${p.brand}</a></div>
+        <div class="pdp-stars"><span class="starrow">${starRow(p.rating)}</span><span>${p.rating}</span>
+          <a class="rcount">${p.reviews.toLocaleString()} ratings</a></div>
+        <div class="pdp-price"><span class="sym">EGP </span><span class="whole">${pp.whole}.${pp.frac}</span>
+          ${p.list?`<span class="list" style="margin-left:8px">List: <s>${money(p.list)}</s> (-${Math.round((1-p.price/p.list)*100)}%)</span>`:''}</div>
+        <div class="feat"><h3>About this item</h3><p>${p.desc}</p>
+          <ul><li>Brand: ${p.brand}</li><li>Category: ${pretty(p.cat)}</li><li>${p.stock} in stock</li></ul></div>
+      </div>
+      <div class="buybox">
+        <div class="bprice"><span class="sym">EGP </span><span class="whole">${pp.whole}.${pp.frac}</span></div>
+        <div class="ship">FREE delivery <b>Tomorrow</b>. Order within 4 hrs.</div>
+        <div class="stock">In Stock</div>
+        ${low?`<div class="low">Only ${p.stock} left in stock &mdash; order soon.</div>`:''}
+        <select id="pdpQty">${[1,2,3,4,5].map(n=>`<option value="${n}">Qty: ${n}</option>`).join('')}</select>
+        <button class="btn-cart" onclick="addFromPdp(${p.id},false)">Add to cart</button>
+        <button class="btn-buy" onclick="addFromPdp(${p.id},true)">Buy now</button>
+        <div class="secure">&#128274; Secure transaction</div>
+      </div></div></div>`;
+}
+function swapMain(el,url){document.getElementById('pdpMain').src=url;
+  document.querySelectorAll('.gthumbs img').forEach(i=>i.classList.remove('sel'));el.classList.add('sel');}
+
+function viewCart(){
+  const items=Object.entries(cart);
+  if(!items.length)return `<div class="view"><div class="cartmain empty"><div class="ei">&#128722;</div>
+    <h2>Your Shopmazon Cart is empty</h2>
+    <button class="addbtn" style="max-width:220px;margin:0 auto" onclick="go('home')">Continue shopping</button></div></div>`;
+  const subtotal=items.reduce((a,[,i])=>a+i.price*i.qty,0);
+  const qtyTotal=items.reduce((a,[,i])=>a+i.qty,0);
+  const rows=items.map(([k,i])=>`<div class="citem">
+    <div class="cthumb"><img ${imgAttr(i.img)} alt=""></div>
+    <div><div class="cname">${i.title}</div><div class="cstock">In Stock</div>
+      <div class="cctrl"><div class="qtybox"><button onclick="chgQty('${k}',-1)">&minus;</button>
+        <span>${i.qty}</span><button onclick="chgQty('${k}',1)">+</button></div>
+        <span class="csep"><a onclick="removeItem('${k}')">Delete</a></span></div></div>
+    <div class="cprice">${money(i.price*i.qty)}</div></div>`).join('');
+  return `<div class="view"><div class="cartwrap">
+    <div class="cartmain"><div class="subtitle">Price</div><h1>Shopping Cart</h1>${rows}
+      <div class="carttotal">Subtotal (${qtyTotal} item${qtyTotal>1?'s':''}): <b>${money(subtotal)}</b></div></div>
+    <div class="checkout-side">${subtotal>=500000?'<div class="free">&#10003; Your order qualifies for FREE Delivery.</div>':''}
+      <div class="st">Subtotal (${qtyTotal} item${qtyTotal>1?'s':''}): <b>${money(subtotal)}</b></div>
+      <button class="btn-checkout" onclick="go('checkout')">Proceed to checkout</button></div>
+  </div></div>`;
+}
+
+function viewCheckout(){
+  const items=Object.entries(cart);if(!items.length){go('home');return'';}
+  const subtotal=items.reduce((a,[,i])=>a+i.price*i.qty,0);
+  const shipping=subtotal>=500000?0:2500;const total=subtotal+shipping;
+  return `<div class="view"><h1 style="font-weight:500;margin-bottom:14px">Checkout</h1><div class="cowrap"><div>
+    <div class="cobox"><h3>1 &middot; Shipping address</h3>
+      <div class="field"><label>Full name</label><input id="f-name" placeholder="Full name"></div>
+      <div class="field"><label>Address</label><input id="f-addr" placeholder="Street address"></div>
+      <div class="row2"><div class="field"><label>City</label><input id="f-city" value="Cairo"></div>
+        <div class="field"><label>Postal code</label><input id="f-zip" value="11511"></div></div>
+      <div class="field"><label>Phone</label><input id="f-phone" placeholder="Phone number"></div></div>
+    <div class="cobox"><h3>2 &middot; Payment method</h3>
+      <div class="field"><label>Payment</label><select id="f-pay">
+        <option>Cash on Delivery</option><option>Credit / Debit card</option><option>Shopmazon Pay</option></select></div>
+      <div class="co-note">&#128274; Demo only &mdash; no card details are collected, sent, or stored.</div></div>
+    </div>
+    <div class="osum"><h3>Order summary</h3>
+      <div class="oline"><span>Items (${items.reduce((a,[,i])=>a+i.qty,0)})</span><span>${money(subtotal)}</span></div>
+      <div class="oline"><span>Shipping</span><span>${shipping?money(shipping):'FREE'}</span></div>
+      <div class="oline total"><span>Order total</span><span>${money(total)}</span></div>
+      <button class="btn-place" onclick="placeOrder()">Place your order</button>
+      <div class="co-note" style="margin-top:10px">By placing your order you agree to this demo's (non-binding) terms.</div>
+    </div></div></div>`;
+}
+
+function viewConfirm(){
+  const oid='SM-'+Math.random().toString(36).slice(2,10).toUpperCase();
+  return `<div class="view"><div class="conf"><div class="big">&#9989;</div>
+    <h1>Order placed, thank you!</h1><p>A confirmation would be emailed to you.</p>
+    <div class="oid">Order # ${oid}</div><p>Estimated delivery: <b>Tomorrow by 9 PM</b></p>
+    <button onclick="go('home')">Continue shopping</button></div></div>`;
+}
+
+/* ---- actions ---- */
+function quickAdd(id){const p=PRODUCTS.find(x=>x.id===id);addToCart(p,1);toast(p.title.slice(0,38)+'... added to cart');}
+function addFromPdp(id,buyNow){const p=PRODUCTS.find(x=>x.id===id);
+  addToCart(p,parseInt(document.getElementById('pdpQty').value,10));
+  if(buyNow)go('checkout');else{toast('Added to cart');go('cart');}}
+function addToCart(p,qty){const k=cartKey(p.id);
+  if(cart[k])cart[k].qty+=qty;else cart[k]={id:p.id,title:p.title,price:p.price,img:p.img,qty};
+  saveCart();}
+function chgQty(k,d){if(!cart[k])return;cart[k].qty+=d;if(cart[k].qty<=0)delete cart[k];saveCart();render();}
+function removeItem(k){delete cart[k];saveCart();render();}
+function placeOrder(){const n=document.getElementById('f-name').value.trim();
+  const a=document.getElementById('f-addr').value.trim();
+  if(!n||!a){toast('Enter name and address to place the order');return;}
+  cart={};saveCart();go('confirm');}
+
+let toastTimer;
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2200);}
+
+loadProducts();
+</script>
+</body>
+</html>
